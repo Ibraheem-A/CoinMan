@@ -33,6 +33,10 @@ public class CoinMan extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+		if (Gdx.input.justTouched()) {
+			velocity = -10;
+		}
+
 		if (pause < 8) {
 			pause++;
 		} else {
@@ -41,6 +45,18 @@ public class CoinMan extends ApplicationAdapter {
 				manState++;
 			} else {
 				manState = 0;
+			}
+		}
+
+		if (manY <= man[manState].getHeight()/2){
+			if (Gdx.input.justTouched()) {
+				gravity = 0.2f;
+				velocity = -10;
+				manY = man[manState].getHeight()/2;
+			} else {
+				manY = man[manState].getHeight() / 2;
+				velocity = 0;
+				gravity = 0;
 			}
 		}
 
