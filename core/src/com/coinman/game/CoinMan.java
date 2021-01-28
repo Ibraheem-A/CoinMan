@@ -24,6 +24,7 @@ public class CoinMan extends ApplicationAdapter {
 	float velocity = 0f;
 	int manY = 0;
 	int score = 0;
+	int gameState = 0;
 
 	Texture coin;
 	int coinCount;
@@ -77,35 +78,18 @@ public class CoinMan extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		// Bombs
-		if (bombCount < 500) {
-			bombCount ++;
-		} else {
-			bombCount = 0;
-			makeBomb();
+		// Game State
+		if (gameState == 1) {
+			// game is live
+		} else if (gameState == 0) {
+			if (Gdx.input.justTouched()) {
+				gameState = 1;
+			}
+		} else if (gameState == 2) {
+			// Game over
 		}
-
-		bombRectangles.clear();
-		for (int i=0; i < bombXs.size(); i++) {
-			batch.draw(bomb, bombXs.get(i), bombYs.get(i));
-			bombXs.set(i, bombXs.get(i) - 6);
-			bombRectangles.add(new Rectangle(bombXs.get(i), bombYs.get(i), bomb.getWidth(), bomb.getHeight()));
-		}
-
-		// Coins
-		if (coinCount < 100) {
-			coinCount++;
-		} else {
-			coinCount = 0;
-			makeCoin();
-		}
-
-		coinRectangles.clear();
-		for (int i=0; i<coinXs.size(); i++){
-			batch.draw(coin, coinXs.get(i), coinYs.get(i));
-			coinXs.set(i, coinXs.get(i) - 4);
-			coinRectangles.add(new Rectangle(coinXs.get(i), coinYs.get(i), coin.getWidth(), coin.getHeight()));
-		}
+		startDisplayingBombs();
+		startDisplayingCoins();
 
 		// On screen touch
 		if (Gdx.input.justTouched()) {
@@ -155,6 +139,7 @@ public class CoinMan extends ApplicationAdapter {
 		for(int i=0; i < bombRectangles.size(); i++) {
 			if (Intersector.overlaps(manRectangle, bombRectangles.get(i))) {
 				Gdx.app.log("Bomb!", "Collision!!!");
+				gameState = 0;
 				bombRectangles.remove(i);
 				bombXs.remove(i);
 				bombYs.remove(i);
@@ -165,7 +150,41 @@ public class CoinMan extends ApplicationAdapter {
 
 		batch.end();
 	}
-	
+
+	private void startDisplayingCoins() {
+		// Coins
+		if (coinCount < 100) {
+			coinCount++;
+		} else {
+			coinCount = 0;
+			makeCoin();
+		}
+
+		coinRectangles.clear();
+		for (int i=0; i<coinXs.size(); i++){
+			batch.draw(coin, coinXs.get(i), coinYs.get(i));
+			coinXs.set(i, coinXs.get(i) - 4);
+			coinRectangles.add(new Rectangle(coinXs.get(i), coinYs.get(i), coin.getWidth(), coin.getHeight()));
+		}
+	}
+
+	private void startDisplayingBombs() {
+		// Bombs
+		if (bombCount < 500) {
+			bombCount ++;
+		} else {
+			bombCount = 0;
+			makeBomb();
+		}
+
+		bombRectangles.clear();
+		for (int i=0; i < bombXs.size(); i++) {
+			batch.draw(bomb, bombXs.get(i), bombYs.get(i));
+			bombXs.set(i, bombXs.get(i) - 6);
+			bombRectangles.add(new Rectangle(bombXs.get(i), bombYs.get(i), bomb.getWidth(), bomb.getHeight()));
+		}
+	}
+
 	@Override
 	public void dispose () {
 		batch.dispose();
