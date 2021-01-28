@@ -16,6 +16,7 @@ public class CoinMan extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background;
 	Texture[] man;
+	Texture manDead;
 	Rectangle manRectangle;
 	BitmapFont font;
 	int manState = 0;
@@ -49,6 +50,7 @@ public class CoinMan extends ApplicationAdapter {
 		man[1] = new Texture("frame-2.png");
 		man[2] = new Texture("frame-3.png");
 		man[3] = new Texture("frame-4.png");
+		manDead = new Texture("dizzy-1.png");
 
 		manY = Gdx.graphics.getHeight() / 2;
 
@@ -99,12 +101,15 @@ public class CoinMan extends ApplicationAdapter {
 			if (Gdx.input.justTouched()) {
 				gameState = 1;
 				resetGameParameters();
-
+				batch.draw(manDead, manRectangle.getX(), manRectangle.getY());
 			}
 		}
 
-
-		batch.draw(man[manState], (float) (Gdx.graphics.getWidth()/2 - man[manState].getWidth() / 2), (float) (manY - man[manState].getHeight() / 2));
+		if (gameState == 2) {
+			batch.draw(manDead, manRectangle.getX(), manRectangle.getY());
+		} else {
+			batch.draw(man[manState], (float) (Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2), (float) (manY - man[manState].getHeight() / 2));
+		}
 		manRectangle = new Rectangle((float)Gdx.graphics.getWidth()/2 - (float)(man[manState].getWidth()/2), (float)(manY - man[manState].getHeight()/2), man[manState].getWidth(), man[manState].getHeight());
 
 		for(int i=0; i < coinRectangles.size(); i++) {
@@ -119,7 +124,7 @@ public class CoinMan extends ApplicationAdapter {
 		for(int i=0; i < bombRectangles.size(); i++) {
 			if (Intersector.overlaps(manRectangle, bombRectangles.get(i))) {
 				Gdx.app.log("Bomb!", "Collision!!!");
-				gameState = 0;
+				gameState = 2;
 				bombRectangles.remove(i);
 				bombXs.remove(i);
 				bombYs.remove(i);
