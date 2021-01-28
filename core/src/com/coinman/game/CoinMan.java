@@ -2,7 +2,9 @@ package com.coinman.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 
@@ -15,6 +17,7 @@ public class CoinMan extends ApplicationAdapter {
 	Texture background;
 	Texture[] man;
 	Rectangle manRectangle;
+	BitmapFont font;
 	int manState = 0;
 	int pause = 0;
 	float gravity = 0.2f;
@@ -49,9 +52,12 @@ public class CoinMan extends ApplicationAdapter {
 		manY = Gdx.graphics.getHeight() / 2;
 
 		coin = new Texture("coin.png");
-		random = new Random();
-
 		bomb = new Texture("bomb.png");
+
+		random = new Random();
+		font = new BitmapFont();
+		font.setColor(Color.WHITE);
+		font.getData().setScale(10);
 	}
 
 	public void makeCoin () {
@@ -149,8 +155,13 @@ public class CoinMan extends ApplicationAdapter {
 		for(int i=0; i < bombRectangles.size(); i++) {
 			if (Intersector.overlaps(manRectangle, bombRectangles.get(i))) {
 				Gdx.app.log("Bomb!", "Collision!!!");
+				bombRectangles.remove(i);
+				bombXs.remove(i);
+				bombYs.remove(i);
 			}
 		}
+
+		font.draw(batch, String.valueOf(score), 100, 200);
 
 		batch.end();
 	}
