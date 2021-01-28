@@ -80,49 +80,29 @@ public class CoinMan extends ApplicationAdapter {
 
 		// Game State
 		if (gameState == 1) {
-			// game is live
+			// Game is live
+			startDisplayingBombs();
+			startDisplayingCoins();
+			onScreenTouch();
+			startManRunning();
+			onManReachBottomOfScreen();
+
+			velocity += gravity;
+			manY -= velocity;
 		} else if (gameState == 0) {
+			// Waiting to start
 			if (Gdx.input.justTouched()) {
 				gameState = 1;
 			}
 		} else if (gameState == 2) {
 			// Game over
-		}
-		startDisplayingBombs();
-		startDisplayingCoins();
-
-		// On screen touch
-		if (Gdx.input.justTouched()) {
-			velocity = -10;
-		}
-
-		if (pause < 8) {
-			pause++;
-		} else {
-			pause = 0;
-			if (manState < 3) {
-				manState++;
-			} else {
-				manState = 0;
-			}
-		}
-
-		// when coinMan reaches bottom
-		if (manY <= man[manState].getHeight()/2){
 			if (Gdx.input.justTouched()) {
-				gravity = 0.2f;
-				velocity = -10;
-				manY = man[manState].getHeight()/2;
-			} else {
-				manY = man[manState].getHeight() / 2;
-				velocity = 0;
-				gravity = 0;
+				gameState = 1;
+				resetGameParameters();
+
 			}
 		}
 
-
-		velocity += gravity;
-		manY -= velocity;
 
 		batch.draw(man[manState], (float) (Gdx.graphics.getWidth()/2 - man[manState].getWidth() / 2), (float) (manY - man[manState].getHeight() / 2));
 		manRectangle = new Rectangle((float)Gdx.graphics.getWidth()/2 - (float)(man[manState].getWidth()/2), (float)(manY - man[manState].getHeight()/2), man[manState].getWidth(), man[manState].getHeight());
@@ -149,6 +129,55 @@ public class CoinMan extends ApplicationAdapter {
 		font.draw(batch, String.valueOf(score), 100, 200);
 
 		batch.end();
+	}
+
+	private void resetGameParameters() {
+		manY = Gdx.graphics.getHeight()/2;
+		score = 0;
+		velocity = 0;
+		coinXs.clear();
+		coinYs.clear();
+		coinRectangles.clear();
+		coinCount = 0;
+		bombXs.clear();
+		bombYs.clear();
+		bombRectangles.clear();
+		bombCount = 0;
+	}
+
+	private void onManReachBottomOfScreen() {
+		// when coinMan reaches bottom
+		if (manY <= man[manState].getHeight()/2){
+			if (Gdx.input.justTouched()) {
+				gravity = 0.2f;
+				velocity = -10;
+				manY = man[manState].getHeight()/2;
+			} else {
+				manY = man[manState].getHeight() / 2;
+				velocity = 0;
+				gravity = 0;
+			}
+		}
+	}
+
+	private void startManRunning() {
+		if (pause < 8) {
+			pause++;
+		} else {
+			pause = 0;
+			if (manState < 3) {
+				manState++;
+			} else {
+				manState = 0;
+			}
+		}
+	}
+
+	private void onScreenTouch() {
+		// On screen touch
+		if (Gdx.input.justTouched()) {
+			velocity = -10;
+		}
 	}
 
 	private void startDisplayingCoins() {
